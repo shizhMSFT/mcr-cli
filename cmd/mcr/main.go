@@ -19,9 +19,10 @@ func main() {
 			},
 		},
 		Commands: []*cli.Command{
-			treeCommand,
+			catalogCommand,
 			tagsCommand,
 			inspectCommand,
+			treeCommand,
 		},
 	}
 	if err := app.Run(os.Args); err != nil {

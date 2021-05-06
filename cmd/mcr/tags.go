@@ -12,7 +12,10 @@ var tagsCommand = &cli.Command{
 	Name:      "tags",
 	Usage:     "List tags",
 	ArgsUsage: "<repository_name>",
-	Action:    runTags,
+	Flags: []cli.Flag{
+		jsonFlag,
+	},
+	Action: runTags,
 }
 
 func runTags(ctx *cli.Context) error {
@@ -27,6 +30,9 @@ func runTags(ctx *cli.Context) error {
 		return err
 	}
 
+	if ctx.Bool(jsonFlag.Name) {
+		return printJSON(tags)
+	}
 	for _, tag := range tags {
 		fmt.Println(tag)
 	}
