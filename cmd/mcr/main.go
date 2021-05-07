@@ -23,6 +23,7 @@ func main() {
 			tagsCommand,
 			inspectCommand,
 			treeCommand,
+			searchCommand,
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
