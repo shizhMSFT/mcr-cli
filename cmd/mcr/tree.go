@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
-	"strings"
+	"os"
 
-	"github.com/disiqueira/gotree"
+	"github.com/fatih/color"
+	"github.com/need-being/go-tree"
 	"github.com/shizhMSFT/mcr-go"
 	"github.com/urfave/cli/v2"
 )
@@ -22,29 +23,17 @@ func runTree(ctx *cli.Context) error {
 		return err
 	}
 
-	tree := gotree.New(mcr.RegistryName)
+	root := tree.New(mcr.RegistryName)
+	root.Virtual = true
 	for _, repo := range repos {
-		current := tree
-		parts := strings.Split(repo, "/")
-		for _, part := range parts[:len(parts)-1] {
-			if item, ok := findItem(current, part); ok {
-				current = item
-			} else {
-				current = current.Add(part)
-			}
-		}
-		current.Add(parts[len(parts)-1])
+		root.AddPathString(repo)
 	}
 
-	fmt.Println(tree.Print())
-	return nil
-}
-
-func findItem(tree gotree.Tree, target string) (gotree.Tree, bool) {
-	for _, item := range tree.Items() {
-		if item.Text() == target {
-			return item, true
+	printer := tree.NewPrinter(os.Stdout, func(n *tree.Node) string {
+		if n.Virtual {
+			return color.BlueString("%v", n.Value)
 		}
-	}
-	return nil, false
+		return fmt.Sprint(n.Value)
+	})
+	return printer.Print(root)
 }
